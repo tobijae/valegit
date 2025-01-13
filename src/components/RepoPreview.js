@@ -7,30 +7,67 @@ const RepoPreview = () => {
   const [error, setError] = useState('');
   const [previewData, setPreviewData] = useState(null);
 
-  const analyzeRepository = async (url) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const urlSegments = url.split('/');
-    const repoName = urlSegments[urlSegments.length - 1];
-
-    // Determine repository type based on URL patterns
-    let type = 'unknown';
-    if (url.includes('react') || url.includes('vue') || url.includes('angular')) {
-      type = 'web-application';
-    } else if (url.includes('android') || url.includes('ios')) {
-      type = 'mobile-application';
-    } else if (url.includes('desktop')) {
-      type = 'desktop-application';
+  const parseRepoUrl = (url) => {
+    try {
+      const [, , , owner, repo] = url.split('/');
+      return { owner, repo };
+    } catch {
+      throw new Error('Invalid repository URL');
     }
+  };
+
+  const analyzeRepository = async (url) => {
+    const { owner, repo } = parseRepoUrl(url);
+    
+    // Fetch repository details
+    const repoResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    if (!repoResponse.ok) throw new Error('Repository not found');
+    const repoData = await repoResponse.json();
+
+    // Fetch repository contents
+    const contentsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents`);
+    if (!contentsResponse.ok) throw new Error('Cannot access repository contents');
+    const contents = await contentsResponse.json();
+
+    // Analyze project type based on files
+    const files = contents.map(file => file.name.toLowerCase());
+    const projectType = determineProjectType(files);
+    const techStack = analyzeTechStack(files);
 
     return {
-      name: repoName,
-      type: type,
-      status: 'ready',
-      language: url.includes('typescript') ? 'TypeScript' : 
-                url.includes('python') ? 'Python' : 'JavaScript'
+      name: repoData.name,
+      type: projectType,
+      language: repoData.language,
+      techStack,
+      status: 'ready'
     };
+  };
+
+  const determineProjectType = (files) => {
+    if (files.includes('package.json')) {
+      if (files.includes('react')) return 'React Application';
+      if (files.some(f => f.includes('vue'))) return 'Vue Application';
+      if (files.includes('angular.json')) return 'Angular Application';
+      return 'Node.js Project';
+    }
+    if (files.includes('requirements.txt') || files.includes('setup.py')) return 'Python Project';
+    if (files.includes('gemfile')) return 'Ruby Project';
+    if (files.includes('dockerfile')) return 'Docker Project';
+    if (files.includes('index.html')) return 'Static Website';
+    return 'Unknown Project Type';
+  };
+
+  const analyzeTechStack = (files) => {
+    const stack = new Set();
+    
+    if (files.includes('package.json')) stack.add('Node.js');
+    if (files.includes('requirements.txt')) stack.add('Python');
+    if (files.includes('docker-compose.yml')) stack.add('Docker');
+    if (files.includes('kubernetes')) stack.add('Kubernetes');
+    if (files.includes('tailwind.config.js')) stack.add('Tailwind CSS');
+    if (files.some(f => f.includes('.sql'))) stack.add('SQL');
+
+    return Array.from(stack);
   };
 
   const handlePreview = async () => {
@@ -46,7 +83,7 @@ const RepoPreview = () => {
       const data = await analyzeRepository(repoUrl);
       setPreviewData(data);
     } catch (err) {
-      setError('Failed to analyze repository');
+      setError(err.message || 'Failed to analyze repository');
     } finally {
       setLoading(false);
     }
@@ -125,13 +162,15 @@ const RepoPreview = () => {
                   
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-500">Language</h4>
+                      <h4 className="text-sm font-medium text-gray-500">Primary Language</h4>
                       <p className="mt-1 text-sm text-gray-900">{previewData.language}</p>
                     </div>
                     
                     <div>
-                      <h4 className="text-sm font-medium text-gray-500">Status</h4>
-                      <p className="mt-1 text-sm text-gray-900">{previewData.status}</p>
+                      <h4 className="text-sm font-medium text-gray-500">Tech Stack</h4>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {previewData.techStack.join(', ') || 'Not detected'}
+                      </p>
                     </div>
                   </div>
                 </div>
