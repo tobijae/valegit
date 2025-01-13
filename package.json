@@ -1,17 +1,8 @@
 {
   "name": "valegit",
   "version": "1.0.0",
-  "homepage": "https://tobijae.github.io/valegit",
-  "description": "GitHub Repository Preview Platform",
-  "main": "src/index.js",
-  "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+  "homepage": "https://tobijae.github.io/valegit/",
+  "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -24,8 +15,11 @@
     "@heroicons/react": "^2.1.1",
     "axios": "^1.6.5"
   },
-  "devDependencies": {
-    "gh-pages": "^6.1.1"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
