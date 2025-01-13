@@ -1,8 +1,8 @@
 {
   "name": "valegit",
   "version": "1.0.0",
-  "homepage": "https://tobijae.github.io/valegit/",
   "private": true,
+  "homepage": "https://tobijae.github.io/valegit/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -10,10 +10,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
-    "tailwindcss": "^3.4.1",
-    "@heroicons/react": "^2.1.1",
-    "axios": "^1.6.5"
+    "lucide-react": "^0.263.1",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
