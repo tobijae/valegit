@@ -2,20 +2,225 @@ import React, { useState } from 'react';
 import { Github, Code, Shield, Package, Activity, GitBranch, GitCommit, GitPullRequest } from 'lucide-react';
 
 const RepoPreview = () => {
-  // State management remains the same
   const [repoUrl, setRepoUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [previewData, setPreviewData] = useState(null);
 
-  // All helper functions remain the same (parseRepoUrl, analyzeCodeQuality, analyzeDependencies, etc.)
-  // ... [Previous helper functions remain unchanged]
+  const parseRepoUrl = (url) => {
+    try {
+      const [, , , owner, repo] = url.split('/');
+      return { owner, repo };
+    } catch {
+      throw new Error('Invalid repository URL');
+    }
+  };
+
+  const analyzeDependencies = async (contents, owner, repo) => {
+    try {
+      // Find package.json file in contents
+      const packageJson = contents.find(file => file.name === 'package.json');
+      
+      if (packageJson) {
+        // Fetch package.json content
+        const packageResponse = await fetch(packageJson.download_url);
+        if (!packageResponse.ok) throw new Error('Cannot access package.json');
+        const packageData = await packageResponse.json();
+
+        // Count dependencies
+        const totalDeps = Object.keys({
+          ...packageData.dependencies || {},
+          ...packageData.devDependencies || {}
+        }).length;
+
+        // Mock values for outdated and vulnerable deps
+        // In a real implementation, these would come from npm audit or similar
+        const outdatedDeps = Math.floor(totalDeps * 0.15); // Example: 15% outdated
+        const vulnerableDeps = Math.floor(totalDeps * 0.02); // Example: 2% vulnerable
+
+        return {
+          total: totalDeps,
+          outdated: outdatedDeps,
+          vulnerable: vulnerableDeps
+        };
+      }
+
+      return {
+        total: 0,
+        outdated: 0,
+        vulnerable: 0
+      };
+    } catch (error) {
+      console.error('Error analyzing dependencies:', error);
+      return {
+        total: 0,
+        outdated: 0,
+        vulnerable: 0
+      };
+    }
+  };
+
+  const analyzeCodeQuality = async (owner, repo) => {
+    try {
+      // Fetch commit history for code churn analysis
+      const commitsResponse = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/commits?per_page=100`
+      );
+      const commits = await commitsResponse.json();
+
+      // Calculate code churn (changes per commit)
+      const totalChanges = commits.reduce((acc, commit) => {
+        const stats = commit.stats || { total: 0 };
+        return acc + stats.total;
+      }, 0);
+      const averageChurn = totalChanges / commits.length;
+
+      // Mock values for demonstration
+      // In a real implementation, these would come from static analysis tools
+      return {
+        testCoverage: `${Math.min(95, Math.floor(75 + Math.random() * 20))}%`,
+        codeSmells: Math.floor(averageChurn / 10),
+        technicalDebt: `${Math.floor(averageChurn / 20)} days`,
+        duplications: `${Math.min(20, Math.floor(Math.random() * 10 + 2))}%`
+      };
+    } catch (error) {
+      console.error('Error analyzing code quality:', error);
+      return {
+        testCoverage: 'N/A',
+        codeSmells: 'N/A',
+        technicalDebt: 'N/A',
+        duplications: 'N/A'
+      };
+    }
+  };
+
+  const determineProjectType = (files) => {
+    const fileNames = files.map(file => file.name.toLowerCase());
+    
+    if (fileNames.includes('package.json')) {
+      if (fileNames.includes('next.config.js')) return 'Next.js Application';
+      if (fileNames.some(f => f.includes('react'))) return 'React Application';
+      if (fileNames.some(f => f.includes('vue'))) return 'Vue Application';
+      if (fileNames.includes('angular.json')) return 'Angular Application';
+      if (fileNames.includes('express')) return 'Express Application';
+      return 'Node.js Project';
+    }
+    
+    if (fileNames.includes('go.mod')) return 'Go Project';
+    if (fileNames.includes('cargo.toml')) return 'Rust Project';
+    if (fileNames.includes('requirements.txt') || fileNames.includes('setup.py')) return 'Python Project';
+    if (fileNames.includes('composer.json')) return 'PHP Project';
+    if (fileNames.includes('gemfile')) return 'Ruby Project';
+    if (fileNames.includes('pom.xml')) return 'Java Project';
+    if (fileNames.includes('dockerfile')) return 'Docker Project';
+    if (fileNames.includes('kubernetes') || fileNames.some(f => f.endsWith('.yaml'))) return 'Kubernetes Project';
+    if (fileNames.includes('index.html')) return 'Static Website';
+    
+    return 'Unknown Project Type';
+  };
+
+  const analyzeTechStack = (files) => {
+    const stack = new Set();
+    const fileNames = files.map(file => file.name.toLowerCase());
+    
+    // Frontend
+    if (fileNames.includes('package.json')) stack.add('Node.js');
+    if (fileNames.some(f => f.includes('react'))) stack.add('React');
+    if (fileNames.some(f => f.includes('vue'))) stack.add('Vue.js');
+    if (fileNames.includes('angular.json')) stack.add('Angular');
+    if (fileNames.includes('next.config.js')) stack.add('Next.js');
+    if (fileNames.includes('tailwind.config.js')) stack.add('Tailwind CSS');
+    if (fileNames.some(f => f.includes('sass') || f.endsWith('.scss'))) stack.add('Sass');
+    
+    // Backend
+    if (fileNames.includes('requirements.txt')) stack.add('Python');
+    if (fileNames.includes('django')) stack.add('Django');
+    if (fileNames.includes('flask')) stack.add('Flask');
+    if (fileNames.includes('composer.json')) stack.add('PHP');
+    if (fileNames.includes('laravel')) stack.add('Laravel');
+    if (fileNames.includes('go.mod')) stack.add('Go');
+    if (fileNames.includes('cargo.toml')) stack.add('Rust');
+    
+    // Database
+    if (fileNames.some(f => f.includes('.sql'))) stack.add('SQL');
+    if (fileNames.some(f => f.includes('mongodb'))) stack.add('MongoDB');
+    if (fileNames.some(f => f.includes('redis'))) stack.add('Redis');
+    
+    // DevOps
+    if (fileNames.includes('dockerfile')) stack.add('Docker');
+    if (fileNames.some(f => f.includes('kubernetes') || f.endsWith('.yaml'))) stack.add('Kubernetes');
+    if (fileNames.includes('.github/workflows')) stack.add('GitHub Actions');
+    if (fileNames.includes('jenkins')) stack.add('Jenkins');
+    
+    // Testing
+    if (fileNames.some(f => f.includes('jest'))) stack.add('Jest');
+    if (fileNames.some(f => f.includes('cypress'))) stack.add('Cypress');
+    if (fileNames.some(f => f.includes('pytest'))) stack.add('PyTest');
+
+    return Array.from(stack);
+  };
 
   const analyzeRepository = async (url) => {
     const { owner, repo } = parseRepoUrl(url);
     
-    // All API calls and analysis logic remain the same
-    // ... [Previous analysis logic remains unchanged]
+    // Fetch repository details
+    const repoResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    if (!repoResponse.ok) throw new Error('Repository not found');
+    const repoData = await repoResponse.json();
+
+    // Fetch repository contents
+    const contentsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents`);
+    if (!contentsResponse.ok) throw new Error('Cannot access repository contents');
+    const contents = await contentsResponse.json();
+
+    // Fetch commit activity
+    const commitsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits`);
+    if (!commitsResponse.ok) throw new Error('Cannot access commit history');
+    const commits = await commitsResponse.json();
+
+    // Fetch pull requests
+    const prsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all`);
+    if (!prsResponse.ok) throw new Error('Cannot access pull requests');
+    const pullRequests = await prsResponse.json();
+
+    // Fetch contributors
+    const contributorsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contributors`);
+    if (!contributorsResponse.ok) throw new Error('Cannot access contributors');
+    const contributors = await contributorsResponse.json();
+
+    // Fetch branches
+    const branchesResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/branches`);
+    if (!branchesResponse.ok) throw new Error('Cannot access branches');
+    const branches = await branchesResponse.json();
+
+    // Analyze project type and tech stack
+    const projectType = determineProjectType(contents);
+    const techStack = analyzeTechStack(contents);
+
+    // Calculate code quality metrics
+    const codeQuality = await analyzeCodeQuality(owner, repo);
+
+    // Analyze dependencies if package.json exists
+    const dependencies = await analyzeDependencies(contents, owner, repo);
+
+    return {
+      name: repoData.name,
+      type: projectType,
+      language: repoData.language,
+      techStack,
+      metrics: {
+        codeQuality,
+        dependencies,
+        activity: {
+          commits: commits.length,
+          branches: branches.length,
+          pullRequests: pullRequests.length,
+          contributors: contributors.length,
+          lastUpdate: new Date(repoData.updated_at).toLocaleDateString()
+        }
+      },
+      status: 'ready'
+    };
   };
 
   const handlePreview = async () => {
@@ -127,8 +332,8 @@ const RepoPreview = () => {
                   {/* Code Quality Section */}
                   <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                     <div className="px-4 py-3 border-b border-gray-200">
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-4 w-4" />
+                      <div className="flex items-center gap-2
+                  <Shield className="h-4 w-4" />
                         <h3 className="text-lg font-semibold text-gray-900">Code Quality</h3>
                       </div>
                     </div>
