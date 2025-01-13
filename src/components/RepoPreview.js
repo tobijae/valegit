@@ -337,7 +337,6 @@ const RepoPreview = () => {
                       <h4 className="text-sm font-medium text-gray-900">Activity</h4>
                     </div>
                     <div className="space-y-3">
-                    <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-500">Commits</span>
                         <span className="text-sm font-medium">{previewData.metrics.activity.commits}</span>
