@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Github, Code, Shield, Package, Activity, GitBranch, GitCommit, GitPullRequest } from 'lucide-react';
+import { Github, Code } from 'lucide-react';
 
 const RepoPreview = () => {
   const [repoUrl, setRepoUrl] = useState('');
@@ -240,66 +240,37 @@ const RepoPreview = () => {
             )}
 
             {previewData && (
-              <div className="space-y-6">
-                <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Code className="h-6 w-6 text-blue-500" />
-                    <h3 className="text-lg font-medium text-gray-900">Repository Analysis</h3>
+              <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <Code className="h-6 w-6 text-blue-500" />
+                  <h3 className="text-lg font-medium text-gray-900">Repository Analysis</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Project Name</h4>
+                      <p className="mt-1 text-sm text-gray-900">{previewData.name}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Project Type</h4>
+                      <p className="mt-1 text-sm text-gray-900">{previewData.type}</p>
+                    </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500">Project Name</h4>
-                        <p className="text-lg font-semibold text-gray-900">{previewData.name}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500">Project Type</h4>
-                        <p className="text-lg font-semibold text-gray-900">{previewData.type}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500">Primary Language</h4>
-                        <p className="text-lg font-semibold text-gray-900">{previewData.language}</p>
-                      </div>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Primary Language</h4>
+                      <p className="mt-1 text-sm text-gray-900">{previewData.language}</p>
                     </div>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500">Tech Stack</h4>
-                        <p className="text-lg font-semibold text-gray-900">{previewData.techStack.join(', ')}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-500">Last Update</h4>
-                        <p className="text-lg font-semibold text-gray-900">{previewData.metrics.activity.lastUpdate}</p>
-                      </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Tech Stack</h4>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {previewData.techStack.join(', ') || 'Not detected'}
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="mt-6 space-y-4">
-                    <h4 className="text-sm font-medium text-gray-500">Code Quality Metrics</h4>
-                    <ul className="list-disc pl-5 text-gray-900">
-                      <li>Test Coverage: {previewData.metrics.codeQuality.testCoverage}</li>
-                      <li>Code Smells: {previewData.metrics.codeQuality.codeSmells}</li>
-                      <li>Technical Debt: {previewData.metrics.codeQuality.technicalDebt}</li>
-                      <li>Duplications: {previewData.metrics.codeQuality.duplications}</li>
-                    </ul>
-                  </div>
-
-                  <div className="mt-6 space-y-4">
-                    <h4 className="text-sm font-medium text-gray-500">Dependency Analysis</h4>
-                    <ul className="list-disc pl-5 text-gray-900">
-                      <li>Total Dependencies: {previewData.metrics.dependencies.total}</li>
-                      <li>Outdated Dependencies: {previewData.metrics.dependencies.outdated}</li>
-                      <li>Vulnerable Dependencies: {previewData.metrics.dependencies.vulnerable}</li>
-                    </ul>
-                  </div>
-
-                  <div className="mt-6 space-y-4">
-                    <h4 className="text-sm font-medium text-gray-500">Project Activity</h4>
-                    <ul className="list-disc pl-5 text-gray-900">
-                      <li>Total Commits: {previewData.metrics.activity.commits}</li>
-                      <li>Total Pull Requests: {previewData.metrics.activity.pullRequests}</li>
-                      <li>Total Contributors: {previewData.metrics.activity.contributors}</li>
-                    </ul>
                   </div>
                 </div>
               </div>
@@ -312,4 +283,3 @@ const RepoPreview = () => {
 };
 
 export default RepoPreview;
-
