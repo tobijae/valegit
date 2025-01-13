@@ -1,9 +1,12 @@
 {
   "name": "valegit",
   "version": "1.0.0",
+  "homepage": "https://tobijae.github.io/valegit",
   "description": "GitHub Repository Preview Platform",
   "main": "src/index.js",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -20,6 +23,9 @@
     "tailwindcss": "^3.4.1",
     "@heroicons/react": "^2.1.1",
     "axios": "^1.6.5"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   },
   "eslintConfig": {
     "extends": [
