@@ -251,122 +251,57 @@ const RepoPreview = () => {
                     <div className="space-y-4">
                       <div>
                         <h4 className="text-sm font-medium text-gray-500">Project Name</h4>
-                        <p className="mt-1 text-sm text-gray-900">{previewData.name}</p>
+                        <p className="text-lg font-semibold text-gray-900">{previewData.name}</p>
                       </div>
-                      
                       <div>
                         <h4 className="text-sm font-medium text-gray-500">Project Type</h4>
-                        <p className="mt-1 text-sm text-gray-900">{previewData.type}</p>
+                        <p className="text-lg font-semibold text-gray-900">{previewData.type}</p>
                       </div>
-                    </div>
-                    
-                    <div className="space-y-4">
                       <div>
                         <h4 className="text-sm font-medium text-gray-500">Primary Language</h4>
-                        <p className="mt-1 text-sm text-gray-900">{previewData.language}</p>
+                        <p className="text-lg font-semibold text-gray-900">{previewData.language}</p>
                       </div>
-                      
+                    </div>
+                    <div className="space-y-4">
                       <div>
                         <h4 className="text-sm font-medium text-gray-500">Tech Stack</h4>
-                        <p className="mt-1 text-sm text-gray-900">
-                          {previewData.techStack.join(', ') || 'Not detected'}
-                        </p>
+                        <p className="text-lg font-semibold text-gray-900">{previewData.techStack.join(', ')}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-500">Last Update</h4>
+                        <p className="text-lg font-semibold text-gray-900">{previewData.metrics.activity.lastUpdate}</p>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    <h4 className="text-sm font-medium text-gray-500">Code Quality Metrics</h4>
+                    <ul className="list-disc pl-5 text-gray-900">
+                      <li>Test Coverage: {previewData.metrics.codeQuality.testCoverage}</li>
+                      <li>Code Smells: {previewData.metrics.codeQuality.codeSmells}</li>
+                      <li>Technical Debt: {previewData.metrics.codeQuality.technicalDebt}</li>
+                      <li>Duplications: {previewData.metrics.codeQuality.duplications}</li>
+                    </ul>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    <h4 className="text-sm font-medium text-gray-500">Dependency Analysis</h4>
+                    <ul className="list-disc pl-5 text-gray-900">
+                      <li>Total Dependencies: {previewData.metrics.dependencies.total}</li>
+                      <li>Outdated Dependencies: {previewData.metrics.dependencies.outdated}</li>
+                      <li>Vulnerable Dependencies: {previewData.metrics.dependencies.vulnerable}</li>
+                    </ul>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    <h4 className="text-sm font-medium text-gray-500">Project Activity</h4>
+                    <ul className="list-disc pl-5 text-gray-900">
+                      <li>Total Commits: {previewData.metrics.activity.commits}</li>
+                      <li>Total Pull Requests: {previewData.metrics.activity.pullRequests}</li>
+                      <li>Total Contributors: {previewData.metrics.activity.contributors}</li>
+                    </ul>
                   </div>
                 </div>
-
-                {/* Enhanced Metrics Section */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Code Quality Section */}
-                  <div className="bg-white rounded-lg border border-gray-200 p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Shield className="h-5 w-5 text-blue-500" />
-                      <h4 className="text-sm font-medium text-gray-900">Code Quality</h4>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Test Coverage</span>
-                        <span className="text-sm font-medium">{previewData.metrics.codeQuality.testCoverage}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Code Smells</span>
-                        <span className="text-sm font-medium">{previewData.metrics.codeQuality.codeSmells}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Technical Debt</span>
-                        <span className="text-sm font-medium">{previewData.metrics.codeQuality.technicalDebt}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Duplications</span>
-                        <span className="text-sm font-medium">{previewData.metrics.codeQuality.duplications}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Dependencies Section */}
-                  <div className="bg-white rounded-lg border border-gray-200 p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Package className="h-5 w-5 text-blue-500" />
-                      <h4 className="text-sm font-medium text-gray-900">Dependencies</h4>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Total</span>
-                        <span className="text-sm font-medium">{previewData.metrics.dependencies.total}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Outdated</span>
-                        <span className="text-sm font-medium text-yellow-600">
-                          {previewData.metrics.dependencies.outdated}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Vulnerable</span>
-                        <span className="text-sm font-medium text-red-600">
-                          {previewData.metrics.dependencies.vulnerable}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Activity Section */}
-                  <div className="bg-white rounded-lg border border-gray-200 p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Activity className="h-5 w-5 text-blue-500" />
-                      <h4 className="text-sm font-medium text-gray-900">Activity</h4>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Commits</span>
-                        <span className="text-sm font-medium">{previewData.metrics.activity.commits}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Pull Requests</span>
-                        <span className="text-sm font-medium">{previewData.metrics.activity.pullRequests}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Contributors</span>
-                        <span className="text-sm font-medium">{previewData.metrics.activity.contributors}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Last Update</span>
-                        <span className="text-sm font-medium">{previewData.metrics.activity.lastUpdate}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {previewData.metrics.dependencies.vulnerable > 0 && (
-                  <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-4">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-red-500" />
-                      <p className="text-sm text-red-700">
-                        Found {previewData.metrics.dependencies.vulnerable} vulnerable {previewData.metrics.dependencies.vulnerable === 1 ? 'dependency' : 'dependencies'} that need attention.
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -377,3 +312,4 @@ const RepoPreview = () => {
 };
 
 export default RepoPreview;
+
