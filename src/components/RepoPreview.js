@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Github, Code, Star, GitBranch, Users, Clock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-const { Card, CardHeader, CardTitle, CardContent } = CardComponents;
+import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card';
 
 const RepoPreview = () => {
   const [repoUrl, setRepoUrl] = useState('');
